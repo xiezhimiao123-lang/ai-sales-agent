@@ -1,0 +1,343 @@
+<!-- Merchant Dashboard - AI Sales Agent -->
+<!-- Open this file after starting the backend server -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Sales Agent - Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+body{background:#f4f4f0;padding:24px;color:#1a1a1a}
+
+/* Top nav */
+.topnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:0.5px solid #ddd}
+.topnav-left{display:flex;align-items:center;gap:12px}
+.logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#3266ad,#1a8a5c);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:600}
+.app-name{font-size:15px;font-weight:500}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{padding:6px 14px;font-size:12px;color:#888;border-radius:6px;cursor:pointer;border:none;background:none}
+.nav-tab.active{background:#1a1a1a;color:#fff}
+
+/* Setup card */
+.setup-card{background:#fff;border:0.5px solid #ddd;border-radius:12px;padding:16px 20px;margin-bottom:16px}
+.check-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0}
+.check-row+.check-row{border-top:0.5px solid #f0f0f0}
+.check-icon{width:22px;height:22px;border-radius:50%;background:#1a8a5c;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.check-icon svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2.5}
+.check-title{font-size:13px;font-weight:500;color:#1a1a1a}
+.check-sub{font-size:12px;color:#888;margin-top:2px}
+
+/* Agent bar */
+.agent-bar{background:#fff;border:0.5px solid #ddd;border-radius:12px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.agent-avatar{width:40px;height:40px;border-radius:50%;background:#e8d5c0;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.agent-info{flex:1}
+.agent-name{font-size:13px;font-weight:500;color:#1a1a1a;display:flex;align-items:center;gap:8px}
+.live-badge{background:#e8f7f0;color:#1a8a5c;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:400;display:flex;align-items:center;gap:4px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#1a8a5c}
+.agent-desc{font-size:12px;color:#888;margin-top:2px}
+.turnoff-btn{background:#fff;border:0.5px solid #ccc;border-radius:6px;padding:6px 14px;font-size:12px;color:#444;cursor:pointer}
+
+/* Section */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-size:14px;font-weight:500}
+.section-sub{font-size:11px;color:#aaa;margin-left:8px;font-weight:400}
+.date-sel{background:#fff;border:0.5px solid #ccc;border-radius:6px;padding:5px 10px;font-size:12px;color:#444;cursor:pointer;display:flex;align-items:center;gap:6px}
+
+/* Metric cards */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.metric-card{background:#fff;border:0.5px solid #ddd;border-radius:8px;padding:14px 16px}
+.metric-label{font-size:11px;color:#888;margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.metric-value{font-size:26px;font-weight:500;color:#1a1a1a;line-height:1.2}
+.metric-change{font-size:11px;color:#aaa;margin-top:4px}
+
+/* Charts */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.chart-card{background:#fff;border:0.5px solid #ddd;border-radius:8px;padding:16px}
+.chart-title{font-size:13px;font-weight:500;color:#1a1a1a}
+.chart-sub{font-size:11px;color:#aaa;margin-top:2px;margin-bottom:14px}
+.chart-toggle{display:flex;gap:4px}
+.toggle-btn{background:#f4f4f0;border:none;border-radius:4px;padding:4px 10px;font-size:11px;color:#666;cursor:pointer}
+.toggle-btn.active{background:#1a1a1a;color:#fff}
+
+/* Channel card */
+.channel-card{background:#fff;border:0.5px solid #ddd;border-radius:8px;padding:16px}
+.channel-content{display:flex;align-items:flex-start;gap:24px}
+.channel-list{flex:1}
+.channel-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid #f0f0f0;font-size:12px}
+.channel-row:last-child{border-bottom:none}
+.channel-name{display:flex;align-items:center;gap:8px;color:#444}
+.ch-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.channel-pct{color:#888;min-width:40px;text-align:right}
+.channel-num{color:#1a1a1a;font-weight:500;min-width:24px;text-align:right}
+
+@media(max-width:768px){
+  .metrics-grid{grid-template-columns:repeat(2,1fr)}
+  .charts-row{grid-template-columns:1fr}
+  .channel-content{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<!-- Top Nav -->
+<div class="topnav">
+  <div class="topnav-left">
+    <div class="logo">L</div>
+    <div class="app-name">AI Sales Agent</div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active">Dashboard</button>
+    <button class="nav-tab">Conversations</button>
+    <button class="nav-tab">Products</button>
+    <button class="nav-tab">Settings</button>
+  </div>
+</div>
+
+<!-- Setup Card -->
+<div class="setup-card" id="setupCard">
+  <div class="check-row">
+    <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+    <div><div class="check-title" id="setupProducts">7 products indexed</div></div>
+  </div>
+  <div class="check-row">
+    <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+    <div><div class="check-title">Enable the app embed</div><div class="check-sub">App embed enabled in your live theme.</div></div>
+  </div>
+  <div class="check-row">
+    <div class="check-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+    <div><div class="check-title">Configure your proactive sales</div><div class="check-sub">2 proactive rules enabled</div></div>
+  </div>
+</div>
+
+<!-- Agent Bar -->
+<div class="agent-bar">
+  <div class="agent-avatar">🧑</div>
+  <div class="agent-info">
+    <div class="agent-name"><span id="agentName">Lumi · Sales Advisor</span>
+      <span class="live-badge"><span class="live-dot"></span>Live on store</span>
+    </div>
+    <div class="agent-desc">Visibility is controlled by the app embed in your Shopify theme.</div>
+  </div>
+  <button class="turnoff-btn" id="toggleAgentBtn">Turn off</button>
+</div>
+
+<!-- Metrics Section -->
+<div class="section-header">
+  <div style="display:flex;align-items:center">
+    <span class="section-title">Core AI sales metrics</span>
+    <span class="section-sub">Last 30 days · vs. previous period</span>
+  </div>
+  <div class="date-sel">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="#666" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M5 1v3M11 1v3M2 7h12"/></svg>
+    Last 30 days ▾
+  </div>
+</div>
+
+<div class="metrics-grid">
+  <div class="metric-card">
+    <div class="metric-label">Conversations with AI</div>
+    <div class="metric-value" id="metricConv">—</div>
+    <div class="metric-change" id="metricConvChange">—</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">AI Conversion Rate</div>
+    <div class="metric-value" id="metricConvRate">—</div>
+    <div class="metric-change" id="metricRateChange">—</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">AI-assisted Orders</div>
+    <div class="metric-value" id="metricOrders">—</div>
+    <div class="metric-change" id="metricOrdersChange">—</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Sales with AI</div>
+    <div class="metric-value" id="metricSales">—</div>
+    <div class="metric-change" id="metricSalesChange">—</div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="charts-row">
+  <div class="chart-card">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
+      <div>
+        <div class="chart-title">Conversations with AI</div>
+        <div class="chart-sub">Daily · Last 30 days</div>
+      </div>
+      <div class="chart-toggle">
+        <button class="toggle-btn active">By day</button>
+        <button class="toggle-btn">By week</button>
+      </div>
+    </div>
+    <div style="position:relative;height:180px">
+      <canvas id="convChart" role="img" aria-label="Conversations chart"></canvas>
+    </div>
+  </div>
+  <div class="chart-card">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
+      <div>
+        <div class="chart-title">Sales with AI over time</div>
+        <div class="chart-sub">Daily · Last 30 days</div>
+      </div>
+      <div class="chart-toggle">
+        <button class="toggle-btn active">By day</button>
+        <button class="toggle-btn">By week</button>
+      </div>
+    </div>
+    <div style="position:relative;height:180px">
+      <canvas id="salesChart" role="img" aria-label="Sales chart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Channel Card -->
+<div class="channel-card">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
+    <div>
+      <div class="channel-title" style="font-size:13px;font-weight:500;color:#1a1a1a">Sales by Channel</div>
+      <div class="chart-sub">Where AI-influenced orders came from · Last 30 days</div>
+    </div>
+    <div class="chart-toggle">
+      <button class="toggle-btn active">By conversations</button>
+      <button class="toggle-btn">By orders</button>
+      <button class="toggle-btn">By revenue</button>
+    </div>
+  </div>
+  <div class="channel-content">
+    <div style="width:160px;height:160px;position:relative;flex-shrink:0">
+      <canvas id="pieChart" role="img" aria-label="Channel pie chart"></canvas>
+    </div>
+    <div class="channel-list" style="padding-top:8px" id="channelList"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const API = 'http://localhost:3000/api';
+
+// Load setup status
+async function loadSetup() {
+  const res = await fetch(`${API}/setup`);
+  const data = await res.json();
+  document.getElementById('setupProducts').textContent = `${data.steps[0].label}`;
+  document.getElementById('agentName').textContent = data.agentName;
+}
+
+// Load analytics
+async function loadAnalytics() {
+  const res = await fetch(`${API}/analytics`);
+  const data = await res.json();
+
+  document.getElementById('metricConv').textContent = data.conversations;
+  document.getElementById('metricConvRate').textContent = data.conversionRate + '%';
+  document.getElementById('metricOrders').textContent = data.aiOrders;
+  document.getElementById('metricSales').textContent = '$' + data.aiSales.toFixed(2);
+
+  // Conv chart
+  const convLabels = data.conversationsTrend.map(d => d.date);
+  const convData = data.conversationsTrend.map(d => d.count);
+  new Chart(document.getElementById('convChart'), {
+    type: 'line',
+    data: {
+      labels: convLabels,
+      datasets: [{
+        data: convData,
+        borderColor: '#3266ad',
+        backgroundColor: 'rgba(50,102,173,0.08)',
+        borderWidth: 1.5,
+        pointRadius: 0,
+        fill: true,
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#aaa', maxTicksLimit: 6, maxRotation: 0 } },
+        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 }, color: '#aaa', stepSize: 1 }, min: 0 }
+      }
+    }
+  });
+
+  // Sales chart
+  const salesLabels = data.salesTrend.map(d => d.date);
+  const salesData = data.salesTrend.map(d => d.amount);
+  new Chart(document.getElementById('salesChart'), {
+    type: 'line',
+    data: {
+      labels: salesLabels,
+      datasets: [{
+        data: salesData,
+        borderColor: '#1a8a5c',
+        backgroundColor: 'rgba(26,138,92,0.07)',
+        borderWidth: 1.5,
+        pointRadius: 0,
+        fill: true,
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#aaa', maxTicksLimit: 6, maxRotation: 0 } },
+        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 }, color: '#aaa' }, min: 0 }
+      }
+    }
+  });
+
+  // Pie chart
+  const colors = ['#3266ad', '#999', '#4a4a4a'];
+  new Chart(document.getElementById('pieChart'), {
+    type: 'doughnut',
+    data: {
+      labels: data.channelData.map(c => c.name),
+      datasets: [{
+        data: data.channelData.map(c => c.percentage),
+        backgroundColor: colors,
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      cutout: '55%'
+    }
+  });
+
+  // Channel list
+  const listEl = document.getElementById('channelList');
+  data.channelData.forEach((ch, i) => {
+    const row = document.createElement('div');
+    row.className = 'channel-row';
+    row.innerHTML = `
+      <div class="channel-name"><span class="ch-dot" style="background:${colors[i]}"></span>${ch.name}</div>
+      <div class="channel-pct">${ch.percentage}%</div>
+      <div class="channel-num">${ch.count}</div>
+    `;
+    listEl.appendChild(row);
+  });
+}
+
+// Toggle agent
+document.getElementById('toggleAgentBtn').onclick = function() {
+  const badge = document.querySelector('.live-badge');
+  if (badge.style.display === 'none') {
+    badge.style.display = 'flex';
+    this.textContent = 'Turn off';
+  } else {
+    badge.style.display = 'none';
+    this.textContent = 'Turn on';
+  }
+};
+
+// Init
+loadSetup();
+loadAnalytics();
+</script>
+</body>
+</html>

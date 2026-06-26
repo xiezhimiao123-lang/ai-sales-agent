@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: ai-sales-agent-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_API_BASE
+        sync: false
+      - key: AI_MODEL
+        sync: false
+      - key: SHOPIFY_CLIENT_ID
+        sync: false
+      - key: SHOPIFY_CLIENT_SECRET
+        sync: false
+      - key: SHOPIFY_REDIRECT_URI
+        sync: false
